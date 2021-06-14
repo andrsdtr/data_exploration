@@ -1,0 +1,31 @@
+.loginframe{
+    top: 15vh;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px;
+}
+
+
+.button{
+    width: 100%;
+}
+
+.datalist{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: left;
+}
+
+.personal{
+    margin: 5px;
+}
+
+.bold{
+    font-weight: bold
+}
+
+.marginlr{
+    margin-left: 5px;
+    margin-right: 5px;
+}
