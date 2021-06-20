@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 
-
+<form action="{{ url_for('picked_movies')}}" method="POST" class="">
 <div class="container-fluid position-absolute">
   <div class="loginframe">
-    <h3>Movie </h3>
-    <p>{{ like }}</p>  
+    <h3>Movie Recommendation</h3>
+  </br>
+    <p>Liked movies: {{ movies_like }}</p>
+    <p>Disiked movies: {{ movies_dislike }}</p>  
   </br>
 
     <div class="">
@@ -17,8 +19,8 @@
         <h6 class="card-subtitle mb-2 text-muted">{{ get_date(i) }}</h6>
         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
         <div class="row p-2">
-          <button type="button" class="btn btn-success col me-1">{{like(i)}}like</button>
-          <button type="button" class="btn btn-danger col ms-1">dislike</button>
+          <button type="submit" name="like" value="{{i}}" class="btn btn-success col me-1">like</button>
+          <button type="submit" name="dislike" value="{{i}}" class="btn btn-danger col ms-1">dislike</button>
         </div>
       </div>
     </div>

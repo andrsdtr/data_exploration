@@ -12,46 +12,69 @@ app = Flask(__name__)
 #links = pd.read_csv (r'./../data/links.csv')
 #links_small = pd.read_csv (r'./../data/links_small.csv')
 movies_metadata = pd.read_csv (r'./movies_metadata.csv')
-global movies_like
 movies_like = []
+movies_dislike = []
+random_ids = []
+
+#function to create random movie ids
+def random_id(ids): 
+    global movies_like
+    global movies_dislike
+    global random_ids
+    id = random.choice(movies_metadata.loc[:,'id'].array)
+    if id in movies_like or id in movies_dislike or id in random_ids:
+        return 'repeat'
+    elif id not in movies_like or id not in movies_dislike or id not in random_ids:
+        random_ids.append(id)
+#functions to get movie metadata
+def get_title(id):
+    return movies_metadata.loc[movies_metadata['id'] == str(id), 'title'].array[0]
+def get_date(id):
+    return movies_metadata.loc[movies_metadata['id'] == str(id), 'release_date'].array[0]
+
 # Home
 @app.route('/')
-
 def home():
-    #choosing 10 random movieIds from collection
     global movies_like
-    random_ids = []
-    for i in range(10):
-        random_ids.append(random.choice(movies_metadata.loc[:,'id'].array))
-    
-    def get_title(id):
-        return movies_metadata.loc[movies_metadata['id'] == str(id), 'title'].array[0]
-    def get_date(id):
-        return movies_metadata.loc[movies_metadata['id'] == str(id), 'release_date'].array[0]
-    def like(id):
-        movies_like.append(id)
-        print(id, movies_like)
-        return ""
+    global movies_dislike
+    global random_ids
+
+    #choosing 10 random movie ids from collection
+    if len(random_ids) <= 10:
+        for i in range(10 - len(random_ids)):
+            random_id(random_ids)
     
     return render_template("home.html", 
                             random_ids = random_ids,
                             get_title = get_title,
                             get_date = get_date,
-                            like = like,
                             movies_like = movies_like)
 
-#def picked_movies():
-#    if request.form.get("like"):
-#        movies_like.append(id)
-#
-#    
-#    return render_template("home.html", 
-#                            random_ids = random_ids,
-#                            get_title = get_title,
-#                            get_date = get_date,
-#                            like = like,
-#                            movies_like = movies_like)
-#
+@app.route('/like', methods=['POST', 'GET'])
+def picked_movies():
+    global movies_like
+    global movies_dislike
+    global random_ids 
+    
+    #handling like or dislike button press
+    if request.method == 'POST':
+        if request.form.get("like"):
+            movies_like.append(request.form['like'])
+            if request.form['like'] in random_ids:
+                random_ids.remove(request.form['like'])
+            random_id(random_ids)
+        elif request.form.get("dislike"):
+            movies_dislike.append(request.form['dislike'])
+            if request.form['dislike'] in random_ids:
+                random_ids.remove(request.form['dislike'])
+            random_id(random_ids)
+
+    return render_template("home.html",
+                            random_ids = random_ids,
+                            get_title = get_title,
+                            get_date = get_date,
+                            movies_like = movies_like,
+                            movies_dislike = movies_dislike)
 
 
 if __name__ == '__main__':
