@@ -1,24 +1,34 @@
 {% extends 'base.html' %}
 {% block content %}
 
+
 <div class="container-fluid position-absolute">
   <div class="loginframe">
     <h3>Movie </h3>
-    </br>
-    <div class="card" style="width: 18rem;">
+    <p>{{ like }}</p>  
+  </br>
+
+    <div class="">
+    {% for i in random_ids %}
+    <div class="d-inline-flex p-2 bd-highlight">
+    <div class="card shadow" style="width: 18rem;">
       <div class="card-body">
-        <h5 class="card-title">Card title</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+        <h5 class="card-title">{{ get_title(i) }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ get_date(i) }}</h6>
         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
+        <div class="row p-2">
+          <button type="button" class="btn btn-success col me-1">{{like(i)}}like</button>
+          <button type="button" class="btn btn-danger col ms-1">dislike</button>
+        </div>
       </div>
     </div>
   </div>
+    {% endfor %}
+  </div>
 </div>
 
-<div class="lh-lg personal">
+<div class="lh-lg">
 
 </div>
-
+</form>
 {% endblock %}
