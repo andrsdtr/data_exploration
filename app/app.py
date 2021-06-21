@@ -31,7 +31,8 @@ def get_title(id):
     return movies_metadata.loc[movies_metadata['id'] == str(id), 'title'].array[0]
 def get_date(id):
     return movies_metadata.loc[movies_metadata['id'] == str(id), 'release_date'].array[0]
-
+def get_overview(id):
+    return movies_metadata.loc[movies_metadata['id'] == str(id), 'overview'].array[0]
 # Home
 @app.route('/')
 def home():
@@ -48,6 +49,7 @@ def home():
                             random_ids = random_ids,
                             get_title = get_title,
                             get_date = get_date,
+                            get_overview = get_overview,
                             movies_like = movies_like)
 
 @app.route('/like', methods=['POST', 'GET'])
@@ -73,9 +75,25 @@ def picked_movies():
                             random_ids = random_ids,
                             get_title = get_title,
                             get_date = get_date,
+                            get_overview = get_overview,
                             movies_like = movies_like,
                             movies_dislike = movies_dislike)
 
+@app.route('/recommendation')
+def recommendation():
+    global movies_like
+    global movies_dislike
+    global random_ids
 
+    movies_like = []
+    movies_dislike = []
+    recommendation = ['35023', '51955', '397552', '58995']
+    
+    return render_template("recommendation.html", 
+                            recommendation = recommendation,
+                            get_title = get_title,
+                            get_date = get_date,
+                            get_overview = get_overview,
+                            movies_like = movies_like)
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
