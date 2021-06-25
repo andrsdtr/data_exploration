@@ -13,8 +13,10 @@ app = Flask(__name__)
 #links_small = pd.read_csv (r'./../data/links_small.csv')
 movies_metadata = pd.read_csv (r'./movies_metadata.csv')
 movies_like = []
+movie_search = []
 movies_dislike = []
 random_ids = []
+movie_search = ''
 
 #function to create random movie ids
 def random_id(ids): 
@@ -33,8 +35,14 @@ def get_date(id):
     return movies_metadata.loc[movies_metadata['id'] == str(id), 'release_date'].array[0]
 def get_overview(id):
     return movies_metadata.loc[movies_metadata['id'] == str(id), 'overview'].array[0]
-# Home
+
+#homepage
 @app.route('/')
+def start():
+    return render_template("start.html")
+
+#pick movies page                           
+@app.route('/pick')
 def home():
     global movies_like
     global movies_dislike
@@ -45,14 +53,15 @@ def home():
         for i in range(10 - len(random_ids)):
             random_id(random_ids)
     
-    return render_template("home.html", 
+    return render_template("pick.html", 
                             random_ids = random_ids,
                             get_title = get_title,
                             get_date = get_date,
                             get_overview = get_overview,
                             movies_like = movies_like)
 
-@app.route('/like', methods=['POST', 'GET'])
+#process picked movies
+@app.route('/pick', methods=['POST', 'GET'])
 def picked_movies():
     global movies_like
     global movies_dislike
@@ -71,7 +80,7 @@ def picked_movies():
                 random_ids.remove(request.form['dislike'])
             random_id(random_ids)
 
-    return render_template("home.html",
+    return render_template("pick.html",
                             random_ids = random_ids,
                             get_title = get_title,
                             get_date = get_date,
@@ -79,21 +88,34 @@ def picked_movies():
                             movies_like = movies_like,
                             movies_dislike = movies_dislike)
 
-@app.route('/recommendation')
+#recommendation page
+@app.route('/recommendation', methods=['POST', 'GET'])
 def recommendation():
     global movies_like
     global movies_dislike
     global random_ids
+    global movie_search
 
     movies_like = []
     movies_dislike = []
     recommendation = ['35023', '51955', '397552', '58995']
     
+    #get movie search
+    if request.method == 'POST':
+        movie_search = request.form.get("search")
+
     return render_template("recommendation.html", 
                             recommendation = recommendation,
                             get_title = get_title,
                             get_date = get_date,
                             get_overview = get_overview,
-                            movies_like = movies_like)
+                            movies_like = movies_like,
+                            movie_search = movie_search)
+
+#search a movie page
+@app.route('/search')
+def search():    
+    return render_template("search.html")
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)

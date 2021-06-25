@@ -8,8 +8,8 @@
     </br>
       <p>Here are 4 movie recommendations for you!</p>
       </div>
-    <button type="submit" onclick="location.href='{{ url_for('home')}}'" name="get_recommendation" value="get_recommendation" class="btn btn-dark m-3">Get new recommendation</button>
-  
+    <button type="submit" onclick="location.href='{{ url_for('start')}}'" name="get_recommendation" value="get_recommendation" class="btn btn-dark m-3">Get new recommendation</button>
+    <p>{{ movie_search }}</p>
       <div>
       {% for i in recommendation %}
       <div class="card text-start">

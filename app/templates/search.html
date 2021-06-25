@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container-fluid position-absolute text-center">
+    <div class="loginframe">
+      <div class="row text-center">
+      <h3>Movie Recommendation</h3>
+    </br>
+    </br>
+      <p>Please type in a movie title.</p>
+    </div>
+      <div>
+        <form action="{{ url_for('recommendation')}}" method="POST" class="d-flex">
+            <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+    </div>
+  </div>
+  </div>
+
+
+{% endblock %}

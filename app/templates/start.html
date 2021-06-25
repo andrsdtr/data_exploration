@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container-fluid position-absolute text-center">
+    <div class="loginframe">
+      <div class="row text-center">
+      <h3>Movie Recommendation</h3>
+    </br>
+    </br>
+      <p>Hello there!</br>
+        You can ether get a recommendation based on a movie you like or you can pick some of our random movies to get a recommendation.</p> 
+    </div>
+      <div class="row">
+        <p class="col"> </p>
+        <button type="button" onclick="location.href='{{ url_for('search')}}'" name="search" value="search" class="btn btn-dark col me-1">Search Movie</button>
+        <button type="button" onclick="location.href='{{ url_for('home')}}'" name="pick" value="pick" class="btn btn-dark col ms-1">Pick Movie</button>
+        <p class="col"> </p>
+    </div>
+  </div>
+  </div>
+
+
+{% endblock %}
