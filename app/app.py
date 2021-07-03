@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import random
 
+import content_based_rec
+
 app = Flask(__name__)
 
 #ratings_small = pd.read_csv (r'./../data/ratings_small.csv')
@@ -100,9 +102,22 @@ def recommendation():
     movies_dislike = []
     recommendation = ['35023', '51955', '397552', '58995']
     
-    #get movie search
+    #get movie search title
     if request.method == 'POST':
-        movie_search = request.form.get("search")
+        movie_search_title = request.form.get("search")
+    
+    #get search possibilities
+    content_based_rec.get_close_movie_ids(movie_search_title)
+
+    #get movie search id
+    if request.method == 'POST':
+        movie_search_id = request.form.get("search")                # <---  !!!!!!!!!!! change to id form
+
+    #get chosen movie id
+    content_based_rec.get_choose_movie_id(movie_search_id)
+
+    #get recommendation
+    content_based_rec.get_recommendation(content_based_rec.chosen_id, content_based_rec.cosine_sim)
 
     return render_template("recommendation.html", 
                             recommendation = recommendation,
