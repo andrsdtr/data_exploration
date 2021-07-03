@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import random
 
+from rating_based import multi_recommendation
 import content_based_rec
 
 app = Flask(__name__)
@@ -13,7 +14,8 @@ app = Flask(__name__)
 #keywords = pd.read_csv (r'./../data/keywords.csv')
 #links = pd.read_csv (r'./../data/links.csv')
 #links_small = pd.read_csv (r'./../data/links_small.csv')
-movies_metadata = pd.read_csv (r'./movies_metadata.csv')
+movies = pd.read_csv (r'./data/movies.csv')
+movies = pd.read_csv (r'./data/movies.csv')
 movies_like = []
 movie_search = []
 movies_dislike = []
@@ -25,18 +27,18 @@ def random_id(ids):
     global movies_like
     global movies_dislike
     global random_ids
-    id = random.choice(movies_metadata.loc[:,'id'].array)
+    id = random.choice(movies.loc[:,'movieId'].array)
     if id in movies_like or id in movies_dislike or id in random_ids:
         return 'repeat'
     elif id not in movies_like or id not in movies_dislike or id not in random_ids:
         random_ids.append(id)
 #functions to get movie metadata
 def get_title(id):
-    return movies_metadata.loc[movies_metadata['id'] == str(id), 'title'].array[0]
+    return movies.loc[movies['movieId'] == int(id), 'title'].array[0][:-6]
 def get_date(id):
-    return movies_metadata.loc[movies_metadata['id'] == str(id), 'release_date'].array[0]
+    return movies.loc[movies['movieId'] == int(id), 'title'].array[0][-6:]
 def get_overview(id):
-    return movies_metadata.loc[movies_metadata['id'] == str(id), 'overview'].array[0]
+    return movies.loc[movies['movieId'] == int(id), 'genres'].array[0]
 
 #homepage
 @app.route('/')
@@ -72,14 +74,14 @@ def picked_movies():
     #handling like or dislike button press
     if request.method == 'POST':
         if request.form.get("like"):
-            movies_like.append(request.form['like'])
-            if request.form['like'] in random_ids:
-                random_ids.remove(request.form['like'])
+            movies_like.append(int(request.form['like']))
+            if int(request.form['like']) in random_ids:
+                random_ids.remove(int(request.form['like']))
             random_id(random_ids)
         elif request.form.get("dislike"):
-            movies_dislike.append(request.form['dislike'])
-            if request.form['dislike'] in random_ids:
-                random_ids.remove(request.form['dislike'])
+            movies_dislike.append(int(request.form['dislike']))
+            if int(request.form['dislike']) in random_ids:
+                random_ids.remove(int(request.form['dislike']))
             random_id(random_ids)
 
     return render_template("pick.html",
@@ -97,27 +99,31 @@ def recommendation():
     global movies_dislike
     global random_ids
     global movie_search
+    print("Hier ist die liste =====", movies_like)
+    liste = []
+    for i in movies_like:
+        liste.append(int(i))
 
+    recommendation = multi_recommendation(liste)
     movies_like = []
     movies_dislike = []
-    recommendation = ['35023', '51955', '397552', '58995']
     
     #get movie search title
     if request.method == 'POST':
         movie_search_title = request.form.get("search")
     
     #get search possibilities
-    content_based_rec.get_close_movie_ids(movie_search_title)
+    #content_based_rec.get_close_movie_ids(movie_search_title)
 
     #get movie search id
-    if request.method == 'POST':
-        movie_search_id = request.form.get("search")                # <---  !!!!!!!!!!! change to id form
+    #if request.method == 'POST':
+    #    movie_search_id = request.form.get("search")                # <---  !!!!!!!!!!! change to id form
 
     #get chosen movie id
-    content_based_rec.get_choose_movie_id(movie_search_id)
+    #content_based_rec.get_choose_movie_id(movie_search_id)
 
     #get recommendation
-    content_based_rec.get_recommendation(content_based_rec.chosen_id, content_based_rec.cosine_sim)
+    #content_based_rec.get_recommendation(content_based_rec.chosen_id, content_based_rec.cosine_sim)
 
     return render_template("recommendation.html", 
                             recommendation = recommendation,
@@ -130,6 +136,11 @@ def recommendation():
 #search a movie page
 @app.route('/search')
 def search():    
+    return render_template("search.html")
+
+#search results page
+@app.route('/search', methods=['POST', 'GET'])
+def search_result():
     return render_template("search.html")
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics.pairwise import linear_kernel
 import difflib
 
-
+id_array = []
 
 credits = pd.read_csv (r'./data/credits.csv', low_memory=False)
 keywords = pd.read_csv (r'./data/keywords.csv', low_memory=False)
@@ -121,8 +121,8 @@ def get_recommendations(id, cosine_sim=cosine_sim):
     # Return the top 10 most similar movies
     return metadata['title'].iloc[movie_indices]
 
-
 def get_close_movie_ids(input_title):
+    global id_array
     id_array = []
     possible_titles = difflib.get_close_matches(input_title, metadata['original_title'].tolist(), 4)
     for i in possible_titles:
@@ -130,6 +130,7 @@ def get_close_movie_ids(input_title):
     return id_array
     
 def get_chosen_movie_id(input_id_array_pos):
+    global id_array
     chosen_id = id_array[input_id_array_pos]
     return chosen_id  
 
