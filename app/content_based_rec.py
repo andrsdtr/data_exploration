@@ -124,7 +124,7 @@ def get_recommendations(id, cosine_sim=cosine_sim):
 
 def get_close_movie_ids(input_title):
     id_array = []
-    possible_titles = difflib.get_close_matches(input_title, metadata['original_title']).tolist(), 4)
+    possible_titles = difflib.get_close_matches(input_title, metadata['original_title'].tolist(), 4)
     for i in possible_titles:
         id_array.append(metadata.loc[metadata['original_title'] == str(i), 'id'].array[0])
     return id_array
