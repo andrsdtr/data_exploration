@@ -3,5 +3,8 @@ services:
         build: ./app
         ports: 
             - 5001:80
-        volumes:
-            - ./app:/usr/src/app
+        deploy:
+            resources:
+                limits: 
+                    memory: 16G
+           

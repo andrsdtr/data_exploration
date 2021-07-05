@@ -9,33 +9,40 @@ from sklearn.metrics.pairwise import linear_kernel
 import difflib
 
 
-
+print("Start import")
 credits = pd.read_csv (r'./data/credits.csv', low_memory=False)
 keywords = pd.read_csv (r'./data/keywords.csv', low_memory=False)
 metadata = pd.read_csv (r'./data/movies_metadata.csv', low_memory=False)
+print("Import finished")
 
 
 # Remove all rows where the id contains a "-", because some corrupted entries were found, where the date column slipped into the id column
+print("Start metadata clear")
 metadata = metadata[~metadata.id.str.contains("-")]
+print("Finish metadata clear")
 
 
 # Convert IDs to int. Required for merging
+print("Start conversion to IDs - int")
 keywords['id'] = keywords['id'].astype('int')
 credits['id'] = credits['id'].astype('int')
 metadata['id'] = metadata['id'].astype('int')
+print("Conversion to IDs - int finished")
 
 
 
 # Merge keywords and credits into your main metadata dataframe
+print("Merging start")
 metadata = metadata.merge(credits, on='id')
 metadata = metadata.merge(keywords, on='id')
-
+print("Merging finished")
 
 # Parse the stringified features into their corresponding python objects
+print("Feature casting start")
 features = ['cast', 'crew', 'keywords', 'genres']
 for feature in features:
     metadata[feature] = metadata[feature].apply(literal_eval)
-
+print("Feature casting finished")
 
 def get_director(x):
     for i in x:
@@ -56,12 +63,15 @@ def get_list(x):
 
 
 # Define new director, cast, genres and keywords features that are in a suitable form.
+print("Start get director")
 metadata['director'] = metadata['crew'].apply(get_director)
+print("Finished get director")
 
+print("Start get feature list")
 features = ['cast', 'keywords', 'genres']
 for feature in features:
     metadata[feature] = metadata[feature].apply(get_list)
-
+print("Finished get feature list")
 
 # Function to convert all strings to lower case and strip names of spaces
 def clean_data(x):
@@ -76,31 +86,41 @@ def clean_data(x):
 
 # Apply clean_data function to your features.
 features = ['cast', 'keywords', 'director', 'genres']
-
+print("Start clean data")
 for feature in features:
     metadata[feature] = metadata[feature].apply(clean_data)
-
+print("Finished clean data")
 
 def create_soup(x):
     return ' '.join(x['keywords']) + ' ' + ' '.join(x['cast']) + ' ' + x['director'] + ' ' + ' '.join(x['genres'])
 
 # Create a new soup feature
+print("Start create soup")
 metadata['soup'] = metadata.apply(create_soup, axis=1)
-
+print("Finished create soup")
 
 # create count matrix with CountVectorizer
+print("Start Count Vectorizer")
 count = CountVectorizer(stop_words='english')
+print("Finished Count Vectorizer")
+print("Start Count Matrix")
 count_matrix = count.fit_transform(metadata['soup'])
-
+print("Finished Count Matrix")
 
 # Compute the Cosine Similarity matrix based on the count_matrix
+print("Start cosine Sim")
 cosine_sim = cosine_similarity(count_matrix, count_matrix)
-
+#cosine_sim = pd.read_csv(r'./data/cosine_sim.csv')
+#cosine_sim = cosine_sim.to_numpy()
+print("Finished Cosine Sim")
+print("start exporting")
+pd.DataFrame(cosine_sim).to_csv(r'./cosine_sim3', compression='gzip')
 
 # Reset index of your main DataFrame and construct reverse mapping as before
+print("Start Reset Index")
 metadata = metadata.reset_index()
 indices = pd.Series(metadata.index, index=metadata['id'])
-
+print("Finished reset index")
 
 def get_recommendations(id, cosine_sim=cosine_sim):
     # Get the index of the movie that matches the title
