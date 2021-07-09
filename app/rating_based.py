@@ -5,13 +5,25 @@ import copy
 #importing data
 ratings = pd.read_csv (r'./data/ratings.csv')
 movies = pd.read_csv (r'./data/movies.csv')
-#rating_pivot = pd.read_csv (r'./pivot_table.csv')
 
 #creating table with movieId total count of ratings for each movie id
 rating_info = pd.DataFrame(ratings.groupby('movieId')['rating'].mean())
 rating_info['count'] = pd.DataFrame(ratings.groupby('movieId')['rating'].count())
 
+#creating pivot table
 rating_pivot = pd.pivot_table(ratings, index='userId', columns='movieId', values='rating')
+
+
+import difflib
+metadata = pd.read_csv (r'./data/movies_metadata.csv', low_memory=False)
+def get_close_movie_ids(input_title):
+    global id_array
+    id_array = []
+    possible_titles = difflib.get_close_matches(input_title, metadata['original_title'].tolist(), 4)
+    for i in possible_titles:
+        id_array.append(metadata.loc[metadata['original_title'] == str(i), 'id'].array[0])
+    return id_array
+
 
 #main algorithm function
 def recommendation(movie_id):
@@ -43,6 +55,7 @@ def multi_recommendation(movie_ids):
     for i in movie_ids:
         global rec_count
         rec = recommendation(int(i))
+        #skip if no correlating movies
         if rec.empty:
             continue
         #adding top 5 recommended movies to array 

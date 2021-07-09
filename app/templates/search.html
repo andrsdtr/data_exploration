@@ -7,13 +7,31 @@
       <h3>Movie Recommendation</h3>
     </br>
     </br>
-      <p>Please type in a movie title.</p>
+      <p class="hide">Please type in a movie title.</p>
     </div>
-      <div>
+      <div class={{ hide }}>
         <form action="{{ url_for('search_result')}}" method="POST" class="d-flex">
             <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
+    </div>
+    <div class="center row">
+      {% for i in search_array %}
+      <div class="col-md-4 mb-4 d-flex align-items-stretch">
+      <div class="card shadow" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{ get_title(i) }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{ get_date(i) }}</h6>
+          <p class="card-text">{{ get_overview(i) }}</p>
+          <div class="row p-2">
+            <form action="{{ url_for('start')}}" method="POST" class="">
+              <button type="submit" name="like" value="{{i}}" class="btn btn-dark col me-1 position-absolute bottom-0 start-50 translate-middle-x">Choose</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      </div>
+      {% endfor %}
     </div>
   </div>
   </div>
