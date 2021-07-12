@@ -11,11 +11,6 @@ from rating_based import get_close_movie_ids
 
 app = Flask(__name__)
 
-#ratings_small = pd.read_csv (r'./../data/ratings_small.csv')
-#credits = pd.read_csv (r'./../data/credits.csv')
-#keywords = pd.read_csv (r'./../data/keywords.csv')
-#links = pd.read_csv (r'./../data/links.csv')
-#links_small = pd.read_csv (r'./../data/links_small.csv')
 movies = pd.read_csv (r'./data/movies.csv')
 movies_metadata = pd.read_csv (r'./data/movies_metadata.csv')
 movies_like = []
@@ -127,19 +122,6 @@ def recommendation():
         print(request.form.get("search"))
         search_array = get_close_movie_ids(movie_search_title)
     
-    #get search possibilities
-    #content_based_rec.get_close_movie_ids(movie_search_title)
-
-    #get movie search id
-    #if request.method == 'POST':
-    #    movie_search_id = request.form.get("search")                # <---  !!!!!!!!!!! change to id form
-
-    #get chosen movie id
-    #content_based_rec.get_choose_movie_id(movie_search_id)
-
-    #get recommendation
-    #content_based_rec.get_recommendation(content_based_rec.chosen_id, content_based_rec.cosine_sim)
-
     return render_template("recommendation.html", 
                             recommendation = recommendation,
                             get_title = get_title,

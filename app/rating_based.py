@@ -13,6 +13,8 @@ rating_info['count'] = pd.DataFrame(ratings.groupby('movieId')['rating'].count()
 #creating pivot table
 rating_pivot = pd.pivot_table(ratings, index='userId', columns='movieId', values='rating')
 
+####################################################################################################
+# search function (for content based)
 
 import difflib
 metadata = pd.read_csv (r'./data/movies_metadata.csv', low_memory=False)
@@ -23,7 +25,7 @@ def get_close_movie_ids(input_title):
     for i in possible_titles:
         id_array.append(metadata.loc[metadata['original_title'] == str(i), 'id'].array[0])
     return id_array
-
+####################################################################################################
 
 #main algorithm function
 def recommendation(movie_id):
@@ -46,10 +48,10 @@ def recommendation(movie_id):
     corr_movie = corr_movie.set_index(pd.Index(list(range(len(corr_movie)))))
     return corr_movie
 
-rec_count = None
+rating_pivot = pd.pivot_table(ratings, index='userId', columns='movieId', values='rating')
+
 def multi_recommendation(movie_ids):
     #function to get recommendation as an array of titles for multiple inputs  
-
     rec_movies_list = []
     rec_movies_dict = {}
     for i in movie_ids:
@@ -58,18 +60,17 @@ def multi_recommendation(movie_ids):
         #skip if no correlating movies
         if rec.empty:
             continue
-        #adding top 5 recommended movies to array 
+        #adding correlation score for top 5 recommended movies to dictionary  
         for k in range(5):
-            rec_movies_list.append((rec.iloc[k].array[2]))
-        #counting top recommended movies
-        rec_count = collections.Counter(rec_movies_list)
-        #adding top 5 recommended movies to array 
-        for k in range(5):
-            rec_movies_dict[rec.iloc[k][2]] = rec.iloc[k][0]
-   
-    #creating new score: count*correlation
-    rec_movies_final = copy.deepcopy(rec_count) 
-    for k in rec_count:
-        rec_movies_final.update({k: rec_count.get(k) * rec_movies_dict.get(k) - rec_count.get(k)})
+            id = rec.iloc[k].array[2]
+            #checking if id has already been recommended
+            if id in rec_movies_list:
+                #if already recommended the correlation score of both cases are added up
+                rec_movies_copy = copy.deepcopy(rec_movies_dict)
+                rec_movies_copy.update({id: rec_movies_dict.get(id) + rec.iloc[k][0]})
+                rec_movies_dict = rec_movies_copy
+            else:
+                rec_movies_dict[rec.iloc[k][2]] = rec.iloc[k][0]
+                rec_movies_list.append(id)
     
-    return sorted(rec_movies_final, key=rec_movies_final.get, reverse=True)[:10]
+    return sorted(rec_movies_dict, key=rec_movies_dict.get, reverse=True)[:10]

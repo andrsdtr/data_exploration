@@ -8,16 +8,13 @@
     <h3>Movie Recommendation</h3>
   </br>
   </br>
-    <p>Please like at least 5 movies. You can dislike movies to get new options.</p>
-    {% if movies_like|length >= 5%}<p>5/5 liked movies</p>
-    {% else %} <p>{{ movies_like|length }}/5 liked movies</p>
+    <p>Please like at least 3 movies. You can dislike movies to get new options.</p>
+    {% if movies_like|length >= 3%}<p>3/3 liked movies</p>
+    {% else %} <p>{{ movies_like|length }}/3 liked movies</p>
     {% endif %}
-    {% if movies_like|length >= 5%}<button type="button" onclick="location.href='{{ url_for('recommendation')}}'" name="get_recommendation" value="get_recommendation" class="btn btn-dark">Get recommendation!</button>
+    {% if movies_like|length >= 3%}<button type="button" onclick="location.href='{{ url_for('recommendation')}}'" name="get_recommendation" value="get_recommendation" class="btn btn-dark">Get recommendation!</button>
     {% endif %}
-    </div>
-  </br>
-    <p>Liked movies: {{ movies_like }}</p>
-    <p>Disiked movies: {{ movies_dislike }}</p>  
+    </div> 
   </br>
 
     <div class="center">
