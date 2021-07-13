@@ -1,4 +1,9 @@
 Student Data Exploration Project for DHBW Mannheim <br />
+Andreas Dichter, Simon Schmid, Elisa Dandin
+
+Goal of the project:
+The goal of the project was to build a recommender system for movies.
+The user should get to possibilities to get recommndations. One should be similar to the search function in Netflix, where the user inputs one title, but also gets similar movies recommended. The other method is similar to recommendations based on what the user watched. As we can't access live data on what the user watched, he gets do either like or dislike movies and these inputs are used for a comparison to a large number of other users, that rated a movie.
 
 Necessities:<br />
 Jupyter Notebook<br />
